@@ -5,7 +5,7 @@ import datetime
 import locale
 
 def get_next_tournament(date):
-    for _ in range(30):
+    for _ in range(7):
         date += datetime.timedelta(days=1)
         for tour in tournaments:
             appointment = tour.appointment(date.year, date.month)
@@ -16,6 +16,10 @@ def get_next_tournament(date):
 def schedule_next_tournament(client):
     today = datetime.date.today()
     app, tour = get_next_tournament(today)
+
+    if app is None:
+        print('No tournament to be scheduled within the next seven days. Exiting...')
+        return
 
     starts_at = int(app.timestamp())*1000
     name = app.strftime('%B ') + tour.name
