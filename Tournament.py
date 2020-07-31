@@ -8,14 +8,14 @@ def fridays(year, month):
                 day.weekday() == calendar.FRIDAY and \
                 day.month == month]
 
+@dataclass
 class Tournament:
-    def __init__(self, name, week, rated, clock_limit, clock_increment, rounds):
-        self.name = name
-        self.week = week
-        self.rated = rated
-        self.clock_limit = clock_limit
-        self.clock_increment = clock_increment
-        self.rounds = rounds
+    name: str
+    week: int
+    rated: bool
+    clock_limit: int
+    clock_increment: int
+    rounds: int
 
     def appointment(self, year, month):
         date = fridays(year, month)[self.week]
