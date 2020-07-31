@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import calendar
 import datetime
 
@@ -31,4 +32,16 @@ blitz_3plus2 = Tournament('Blitzschach 3 Plus 2', week=2, rated=True,
 blitz_5plus0 = Tournament('Blitzschach 5 Plus 0', week=-1, rated=True,
         clock_limit=60*5, clock_increment=0, rounds=15)
 
-tournaments = [schnell_15plus0, blitz_3plus2, blitz_5plus0]
+blitz_5plus0_u = Tournament('Blitzschach 5 Plus 0 U', week=0, rated=False,
+        clock_limit=60*5, clock_increment=0, rounds=15)
+
+blitz_3plus2_u = Tournament('Blitzschach 3 Plus 2 U', week=3, rated=False,
+        clock_limit=60*3, clock_increment=2, rounds=15)
+
+tournaments = [
+    schnell_15plus0,
+    blitz_3plus2,
+    blitz_5plus0,
+    blitz_5plus0_u,
+    blitz_3plus2_u
+]

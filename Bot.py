@@ -23,7 +23,10 @@ def schedule_next_tournament(client):
 
     starts_at = int(app.timestamp())*1000
     name = app.strftime('%B ') + tour.name
-    description = f'Created by OSHs bot at {datetime.datetime.utcnow()}'
+
+    description = f'Erstellt von OSHs Bot um {datetime.datetime.utcnow()}'
+    if not tour.rated:
+        description += '\n\nKeine Saisonwertung'
 
     print('Creating tournament', name, 'at', app)
     res = client.create_swiss(tour.clock_limit, tour.clock_increment,
