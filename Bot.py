@@ -28,9 +28,9 @@ def schedule_next_tournament(client):
     if not tour.rated:
         description += '\n\nKeine Saisonwertung'
 
-    print(f'Creating {tour} at {app}')
+    print(f'Creating {repr(name)}={tour} at {app}')
     res = client.create_swiss(tour.clock_limit, tour.clock_increment,
-            tour.rounds, name=name, description=description, starts_at=starts_at)
+        tour.rounds, name=name, description=description, starts_at=starts_at)
 
     if res.status_code != 200:
         print('Error:', res.json())
