@@ -32,7 +32,7 @@ class Scheduler:
     def schedule_future_tournaments(self):
         for app, tour in self.get_unscheduled_tournaments():
             starts_at = int(app.timestamp())*1000
-            name = app.strftime('%B ') + tour.name
+            name = app.strftime('%b ') + tour.name
 
             description = f'Erstellt von OSHs Bot um {datetime.datetime.utcnow()}'
             if not tour.rated:
