@@ -4,36 +4,46 @@ from pprint import pprint
 import datetime
 import locale
 
-def get_next_tournament(date):
-    for _ in range(7):
-        date += datetime.timedelta(days=1)
-        for tour in tournaments:
-            appointment = tour.appointment(date.year, date.month)
-            if appointment.date() == date:
-                return appointment, tour
-    return None, None
 
-def schedule_next_tournament(client):
-    today = datetime.date.today()
-    app, tour = get_next_tournament(today)
+class Scheduler:
+    def __init__(self, client):
+        self.client = client
+        self.scheduled_on_server = list(client.get_100_swiss())
 
-    if app is None:
-        print('No tournament to be scheduled within the next seven days. Exiting...')
-        return
+    def get_tournaments_of_date(self, date):
+        for tour in self.scheduled_on_server:
+            if datetime.date.fromisoformat(tour['startsAt'][:10]) == date:
+                return tour 
+        return None
 
-    starts_at = int(app.timestamp())*1000
-    name = app.strftime('%B ') + tour.name
+    def get_unscheduled_tournaments(self):
+        date = datetime.date.today()
+        for _ in range(30):
+            date += datetime.timedelta(days=1)
+            for tour in tournaments:
+                appointment = tour.appointment(date.year, date.month)
+                if appointment.date() == date:
+                    on_server = self.get_tournaments_of_date(date)
+                    if on_server is None:
+                        yield appointment, tour
+                    else:
+                        print('Tournament', tour.name, 'for', date, 'is already scheduled:', on_server)
 
-    description = f'Erstellt von OSHs Bot um {datetime.datetime.utcnow()}'
-    if not tour.rated:
-        description += '\n\nKeine Saisonwertung'
+    def schedule_future_tournaments(self):
+        for app, tour in self.get_unscheduled_tournaments():
+            starts_at = int(app.timestamp())*1000
+            name = app.strftime('%B ') + tour.name
 
-    print(f'Creating {repr(name)}={tour} at {app}')
-    res = client.create_swiss(tour.clock_limit, tour.clock_increment,
-        tour.rounds, name=name, description=description, starts_at=starts_at)
+            description = f'Erstellt von OSHs Bot um {datetime.datetime.utcnow()}'
+            if not tour.rated:
+                description += '\n\nKeine Saisonwertung'
 
-    if res.status_code != 200:
-        print('Error:', res.json())
+            print(f'Scheduling {repr(name)}={tour} at {app}')
+            res = self.client.create_swiss(tour.clock_limit, tour.clock_increment,
+                tour.rounds, name=name, description=description, starts_at=starts_at)
+
+            if res.status_code != 200:
+                print('Error:', res.json())
 
 def main():
     locale.setlocale(locale.LC_ALL, 'de_DE')
@@ -42,7 +52,7 @@ def main():
         token = f.read().strip()
     client = Client(team_id='schachklub-langen-e-v', token=token)
 
-    schedule_next_tournament(client)
+    Scheduler(client).schedule_future_tournaments()
 
 if __name__ == '__main__':
     main()

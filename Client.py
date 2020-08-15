@@ -1,3 +1,4 @@
+import json
 import requests
 
 class Client:
@@ -20,6 +21,11 @@ class Client:
     def get_top_10(self):
         res = self._get('/player')
         return res.json()
+
+    def get_100_swiss(self):
+        res = self._get(f'/api/team/{self.team_id}/swiss')
+        for line in res.text.splitlines():
+            yield json.loads(line)
 
     def create_swiss(self, clock_limit, clock_increment, rounds, name=None, starts_at=None,
             round_interval=None, variant=None, description=None, rated=None, chat_for=None):
