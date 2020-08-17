@@ -42,7 +42,9 @@ class Scheduler:
             res = self.client.create_swiss(tour.clock_limit, tour.clock_increment,
                 tour.rounds, name=name, description=description, starts_at=starts_at)
 
-            if res.status_code != 200:
+            if res.status_code == 200:
+                self.scheduled_on_server.append(res.json())
+            else:
                 print('Error:', res.json())
 
 def main():
