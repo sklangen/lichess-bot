@@ -18,8 +18,7 @@ class Scheduler:
 
     def get_unscheduled_tournaments(self):
         date = datetime.date.today()
-        for _ in range(30):
-            date += datetime.timedelta(days=1)
+        for _ in range(31):
             for tour in tournaments:
                 appointment = tour.appointment(date.year, date.month)
                 if appointment.date() == date:
@@ -28,6 +27,7 @@ class Scheduler:
                         yield appointment, tour
                     else:
                         print('Tournament', tour.name, 'for', date, 'is already scheduled:', on_server)
+            date += datetime.timedelta(days=1)
 
     def schedule_future_tournaments(self):
         for app, tour in self.get_unscheduled_tournaments():
